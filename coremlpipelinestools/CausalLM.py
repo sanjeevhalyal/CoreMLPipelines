@@ -28,7 +28,12 @@ parser = ArgumentParser(
 parser.add_argument(
     "--model", type=str, default="meta-llama/Llama-3.2-1B-Instruct", help="Model ID"
 )
-parser.add_argument("--quantize", action="store_true", help="Linear quantize model")
+parser.add_argument(
+    "--4-bit", action="store_true", help="Linear quantize model to 4 bits"
+)
+parser.add_argument(
+    "--8-bit", action="store_true", help="Linear quantize model to 8 bits"
+)
 parser.add_argument(
     "--half", action="store_true", help="Load the model in half precision"
 )
@@ -165,11 +170,11 @@ mlmodel: ct.models.MLModel = ct.convert(
     skip_model_load=True,
 )
 
-if args.quantize:
+if vars(args)["4_bit"] or vars(args)["8_bit"]:
     log("Quantizing model…")
     op_config = ct.optimize.coreml.OpLinearQuantizerConfig(
         mode="linear_symmetric",
-        dtype="int4",
+        dtype="int8" if vars(args)["8_bit"] else "int4",
         granularity="per_block",
         block_size=32,
     )
@@ -178,8 +183,10 @@ if args.quantize:
 
 log("Saving model…")
 model_name = args.model.split("/")[-1]
-if args.quantize:
+if vars(args)["4_bit"]:
     model_name = f"{model_name}-4bit"
+elif vars(args)["8_bit"]:
+    model_name = f"{model_name}-8bit"
 
 file_name = f"models/{model_name}.mlpackage"
 mlmodel.save(file_name)
@@ -227,8 +234,9 @@ if args.upload:
     parent_card = ModelCard.load(args.model).data.to_dict()
     tags: list[str] = parent_card.get("tags", [])
     tags.append("CoreMLPipelines")
-    if "pytorch" in tags:
-        tags.remove("pytorch")
+    for tag in ["pytorch", "safetensors", "onnx", "transformers.js"]:
+        if tag in tags:
+            tags.remove(tag)
     card_data = ModelCardData(
         language=parent_card.get("language"),
         library_name="coreml",
