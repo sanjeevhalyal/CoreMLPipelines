@@ -20,5 +20,9 @@ public extension TextGenerationPipeline {
         case smolLM2_360M_Instruct_4bit = "finnvoorhees/coreml-SmolLM2-360M-Instruct-4bit"
         case smolLM2_360M_Instruct_8bit = "finnvoorhees/coreml-SmolLM2-360M-Instruct-8bit"
         case smolLM2_1_7B_Instruct_8bit = "finnvoorhees/coreml-SmolLM2-1.7B-Instruct-8bit"
+
+        // MARK: - DeepSeek R1
+
+        case deepSeek_R1_Distill_Qwen_1_5B_4bit = "finnvoorhees/coreml-DeepSeek-R1-Distill-Qwen-1.5B-4bit"
     }
 }
