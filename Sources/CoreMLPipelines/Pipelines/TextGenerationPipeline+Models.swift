@@ -25,6 +25,6 @@ public extension TextGenerationPipeline {
 
         case deepSeek_R1_Distill_Qwen_1_5B_4bit = "finnvoorhees/coreml-DeepSeek-R1-Distill-Qwen-1.5B-4bit"
 
-        case qwen3_06b = "wolfofbackstreet/Qwen3-0.6B-Coreml"
+        case qwen2_5_06b = "wolfofbackstreet/coreml-Qwen2.5-0.5B"
     }
 }
